@@ -1,62 +1,28 @@
-import requests as r
-from bs4 import BeautifulSoup as bs
+import scrapper
+import time
 
-import UserAgents as ua
-import random
-
-import os
 from dotenv import load_dotenv
+import tweepy
+import os
 
 load_dotenv()
 
-GCP_PROJECT_ID = os.getenv('')
-SERVICE_ACCOUNT_FILE = os.getenv('')
-STORAGE_BUCKET_NAME = os.getenv('')
+consumer_key = os.getenv('apiKey')
+consumer_secret = os.getenv('apiKeySecret')
+clientId = os.getenv('clientId')
+clientSecret = os.getenv('clientSecret')
+bearer_token = os.getenv('bearerToken')
+id = os.getenv('id')
 
-def createUserAgents():
-    return f"User-Agent : ${ua.UserAgents[random.randint(0,len(ua.UserAgents)-1)]}"
+auth = tweepy.AppAuthHandler(consumer_key, consumer_secret)
+api = tweepy.API(auth)
+for tweet in tweepy.Cursor(api.search_tweets, q='tweepy').items(10):
+    print(tweet.text)
+def send(response):
+    print(response)
     
-def createRiskyUserAgents():
-    return f"User-Agent : ${ua.RiskyUserAgents[random.randint(0,len(ua.RiskyUserAgents)-1)]}"
-
-def createProxy(proxies):
-    proxies = proxies.get('data')
-    proxy = proxies[random.randint(0,len(proxies)-1)]
-    proxies = {
-   'http': f"http://{proxy.get('ip')}:{proxy.get('port')}",
-   'https': f"https://{proxy.get('ip')}:{proxy.get('port')}",
-}
-# you can replace the f strings with your proxy that works  
-    print(proxies)
-    return proxies
-
-def createProxyDic():
-    proxylist = get("https://proxylist.geonode.com/api/proxy-list?limit=50&page=1&sort_by=lastChecked&sort_type=desc&filterUpTime=100&speed=fast&protocols=https")
-    if proxylist.status_code == 200:
-        proxies = proxylist.json()
-        return createProxy(proxies) 
-    else:
-        print ("Proxylist down")
-    #FREE PROXIES ARE KINDA BROKEN'- most likely won't work. U can use https://openproxy.space/ or https://spys.one/en/ or some better side. it sometimes work:D
-
-
-def get(url):
-    headers = createUserAgents()
-    page = r.get(url,headers)
-    return page
-
-def proxyGet(url):
-    proxies = createProxyDic()
-    page = r.get(url,proxies=proxies)
-    return page
-
-def soup(page):
-    return bs(page.content, 'html.parser')
-
-def Main():
-    """
-Parse your things here from the soup object - suggest using things like find_all("a", class_="sister") / you can also use list ("a", ["stylelistrowone", "stylelistrow"])
-expected usage is soup(get("https://example.com")) and then anything you love.
-
-Scrape the world! 
-"""
+def main():
+    "sebevražda je taky možnost, bráško"
+    mention = "tweet"
+    response = scrapper.main(mention)
+    send(response)
